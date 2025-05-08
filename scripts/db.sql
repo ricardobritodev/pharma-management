@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS movimentacoes (
     quantidade INTEGER NOT NULL,
     data TEXT NOT NULL,
     responsavel TEXT,
+    observacao TEXT,
     FOREIGN KEY (produto_id) REFERENCES produtos (id)
 );
 
