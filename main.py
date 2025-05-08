@@ -1,7 +1,82 @@
-# Importa a função de conexão com o banco do arquivo settings.py
-from settings import conectar_banco
-from datetime import datetime  # Importa o módulo para trabalhar com datas e horários
-from delete import deletar_produto
+from settings import conectar_banco # Importa a função de conexão com o banco do arquivo settings.py
+from delete import deletar_produto # Impora função de deletar produto.
+
+from datetime import datetime  # Importa o módulo para trabalhar com datas e horários.
+import bcrypt # Biblipteca que transforma a senha comum em HASH para motivos de segurança.
+
+# Menu principal que exibe as opções para o usuário
+def menu_produtos():
+    while True:
+        print("\n=== Sistema de Farmácia ===")
+        print("1. Cadastrar produto")
+        print("2. Listar produtos")
+        print("3. Registrar saída")
+        print("4. Verificar validade")
+        print("5. Deletar produto")  
+        print("6. Sair")  
+
+        opcao = input("Escolha uma opção: ")
+
+        if opcao == '1':
+            cadastrar_produto()
+        elif opcao == '2':
+            listar_produtos()
+        elif opcao == '3':
+            registrar_saida()
+        elif opcao == '4':
+            verificar_validade()
+        elif opcao == '5':  
+            deletar_produto()
+        elif opcao == '6':  
+            print("Saindo do sistema...")
+            break
+        else:
+            print("Opção inválida!")
+
+# Função para login
+def login_usuario():
+    conexao = conectar_banco()  # Cria conexão com o banco
+    cursor = conexao.cursor()   # Cria o cursor
+    username = input("Nome de usuário: ")
+    senha = input("Senha: ")
+
+    cursor.execute("SELECT senha FROM usuarios WHERE username = %s", (username,))
+    resultado = cursor.fetchone()
+
+    if resultado and bcrypt.checkpw(senha.encode('utf-8'), resultado[0].encode('utf-8')):
+        print("Login bem-sucedido! Bem-vindo,", username)
+        menu_produtos()
+    else:
+        print("Nome de usuário ou senha inválidos.")
+
+    cursor.close()
+    conexao.close()
+
+
+# Função para cadastrar usuário
+def cadastrar_usuario():
+    nome = input("Nome completo: ")
+    cpf = input("CPF (somente números): ")
+    email = input("Email: ")
+    username = input("Nome de usuário: ")
+    senha = input("Senha: ")
+    senha_hash = bcrypt.hashpw(senha.encode('utf-8'), bcrypt.gensalt())
+
+    conexao = conectar_banco()
+    cursor = conexao.cursor() 
+
+    try:
+        cursor.execute("""
+            INSERT INTO usuarios (nome, cpf, email, username, senha)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (nome, cpf, email, username, senha_hash))
+        conexao.commit()
+        print("Usuário cadastrado com sucesso!")
+    except mysql.connector.Error as err:
+        print("Erro ao cadastrar:", err)
+    finally:
+        cursor.close()
+        conexao.close()
 
 # Função para cadastrar um novo produto no banco de dados
 def cadastrar_produto():
@@ -118,34 +193,23 @@ def verificar_validade():
         
         conexao.close()
 
-# Menu principal que exibe as opções para o usuário
+# Menu Cadastro/login
 def menu():
     while True:
-        print("\n=== Sistema de Farmácia ===")
-        print("1. Cadastrar produto")
-        print("2. Listar produtos")
-        print("3. Registrar saída")
-        print("4. Verificar validade")
-        print("5. Deletar produto")  # Nova opção
-        print("6. Sair")  # Ajustado de 5 para 6
-
+        print("\n1. Cadastrar usuário")
+        print("2. Login")
+        print("3. Sair")
         opcao = input("Escolha uma opção: ")
 
-        if opcao == '1':
-            cadastrar_produto()
-        elif opcao == '2':
-            listar_produtos()
-        elif opcao == '3':
-            registrar_saida()
-        elif opcao == '4':
-            verificar_validade()
-        elif opcao == '5':  # Nova opção
-            deletar_produto()
-        elif opcao == '6':  # Ajustado de 5 para 6
-            print("Saindo do sistema...")
+        if opcao == "1":
+            cadastrar_usuario()
+        elif opcao == "2":
+            login_usuario()
+        elif opcao == "3":
             break
         else:
-            print("Opção inválida!")
+            print("Opção inválida.")
+
 
 # Ponto de entrada principal do programa
 if __name__ == "__main__":
