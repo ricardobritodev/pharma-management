@@ -1,7 +1,6 @@
 import mysql.connector
 from mysql.connector import Error 
 from settings import conectar_banco # Importa a função de conexão com o banco do arquivo settings.py
-from delete import deletar_produto # Impora função de deletar produto.
 
 from datetime import datetime  # Importa o módulo para trabalhar com datas e horários.
 import bcrypt # Biblipteca que transforma a senha comum em HASH para motivos de segurança.
