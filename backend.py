@@ -106,7 +106,7 @@ def cadastrar_produto():
         # Insere o novo produto na tabela 'produtos'
         cursor.execute('''
             INSERT INTO produtos 
-            (nome, principio_ativo, lote, quantidade, preco, data_validade, fabricante, categoria)
+            (nome_produto, principio_ativo, lote, quantidade, preco, data_validade, fabricante, categoria)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         ''', (nome, principio_ativo, lote, quantidade, preco, data_validade, fabricante, categoria))
         
@@ -137,7 +137,7 @@ def listar_produtos():
             print("Nenhum produto cadastrado.")
         else:
             for produto in produtos:
-                print(f"ID: {produto['id']} | Nome: {produto['nome']} | Quantidade: {produto['quantidade']}")
+                print(f"ID: {produto['produto_id']} | Nome: {produto['nome_produto']} | Quantidade: {produto['quantidade']}")
         
         conexao.close()
 
@@ -154,7 +154,7 @@ def registrar_saida():
         cursor = conexao.cursor()
 
         # Verifica o estoque atual do produto
-        cursor.execute('SELECT quantidade FROM produtos WHERE id = %s', (produto_id,))
+        cursor.execute('SELECT quantidade FROM produtos WHERE produto_id = %s', (produto_id,))
         estoque = cursor.fetchone()
 
         if not estoque:
@@ -165,7 +165,7 @@ def registrar_saida():
             novo_estoque = estoque[0] - quantidade
 
             # Atualiza o valor da quantidade
-            cursor.execute('UPDATE produtos SET quantidade = %s WHERE id = %s', (novo_estoque, produto_id))
+            cursor.execute('UPDATE produtos SET quantidade = %s WHERE produto_id = %s', (novo_estoque, produto_id))
 
             # Registra a movimentação de saída
             cursor.execute('''
@@ -196,7 +196,7 @@ def verificar_validade():
             print("Nenhum produto próximo da validade.")
         else:
             for produto in produtos:
-                print(f"ID: {produto['id']} | Nome: {produto['nome']} | Validade: {produto['data_validade']}")
+                print(f"ID: {produto['produto_id']} | Nome: {produto['nome_produto']} | Validade: {produto['data_validade']}")
         
         conexao.close()
 
@@ -225,7 +225,7 @@ def editar_produto():
         cursor = conexao.cursor(dictionary=True)
         
         # Primeiro busca o produto atual
-        cursor.execute('SELECT * FROM produtos WHERE id = %s', (produto_id,))
+        cursor.execute('SELECT * FROM produtos WHERE produto_id = %s', (produto_id,))
         produto = cursor.fetchone()
         
         if not produto:
@@ -233,8 +233,8 @@ def editar_produto():
             return
         
         print("\nDeixe em branco para manter o valor atual")
-        print(f"Valor atual: {produto['nome']}")
-        novo_nome = input("Novo nome do produto: >> ") or produto['nome']
+        print(f"Valor atual: {produto['nome_produto']}")
+        novo_nome = input("Novo nome do produto: >> ") or produto['nome_produto']
         
         print(f"\nValor atual: {produto['principio_ativo']}")
         novo_principio = input("Novo princípio ativo: >> ") or produto['principio_ativo']
@@ -268,7 +268,7 @@ def editar_produto():
         # Atualiza o produto no banco de dados
         cursor.execute('''
             UPDATE produtos SET
-                nome = %s,
+                nome_produto = %s,
                 principio_ativo = %s,
                 lote = %s,
                 quantidade = %s,
@@ -276,7 +276,7 @@ def editar_produto():
                 data_validade = %s,
                 fabricante = %s,
                 categoria = %s
-            WHERE id = %s
+            WHERE produto_id = %s
         ''', (
             novo_nome, novo_principio, novo_lote, nova_quantidade,
             novo_preco, nova_validade, novo_fabricante, nova_categoria,
@@ -334,7 +334,7 @@ def deletar_produto():
             cursor = conexao.cursor(dictionary=True)
             
             # Listagem básica de produtos
-            cursor.execute('SELECT id, nome FROM produtos')
+            cursor.execute('SELECT produto_id, nome_produto FROM produtos')
             produtos = cursor.fetchall()
             
             if not produtos:
@@ -343,7 +343,7 @@ def deletar_produto():
                 
             print("\nProdutos disponíveis:")
             for produto in produtos:
-                print(f"ID: {produto['id']} | Nome: {produto['nome']}")
+                print(f"ID: {produto['produto_id']} | Nome: {produto['nome_produto']}")
             
             produto_id = int(input("\nID do produto a ser deletado: "))
             confirmacao = input(f"Tem certeza que deseja deletar o produto ID {produto_id}? (s/n): ").lower()
@@ -357,7 +357,7 @@ def deletar_produto():
                 # 1. Primeiro deleta as movimentações
                 cursor.execute('DELETE FROM movimentacoes WHERE produto_id = %s', (produto_id,))
                 # 2. Depois deleta o produto
-                cursor.execute('DELETE FROM produtos WHERE id = %s', (produto_id,))
+                cursor.execute('DELETE FROM produtos WHERE produto_id = %s', (produto_id,))
                 conexao.commit()
                 
                 if cursor.rowcount > 0:

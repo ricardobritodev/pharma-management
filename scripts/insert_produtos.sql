@@ -1,8 +1,5 @@
--- Limpa a tabela caso já existam dados (OPCIONAL)
-TRUNCATE TABLE produtos;
-
 -- Insere produtos farmacêuticos de exemplo
-INSERT INTO produtos (nome, principio_ativo, lote, quantidade, preco, data_validade, fabricante, categoria) VALUES
+INSERT INTO produtos (nome_produto, principio_ativo, lote, quantidade, preco, data_validade, fabricante, categoria) VALUES
 -- Analgésicos
 ('Dipirona 500mg', 'Dipirona Sódica', 'LOT20230101', 150, 8.90, '2025-06-30', 'EMS', 'Analgésico'),
 ('Tylenol 750mg', 'Paracetamol', 'LOT20230215', 200, 15.50, '2024-12-31', 'Johnson & Johnson', 'Analgésico'),
@@ -37,4 +34,4 @@ INSERT INTO produtos (nome, principio_ativo, lote, quantidade, preco, data_valid
 ('Protetor Solar FPS 50', 'Avobenzona, Octocrileno', 'LOT20240522', 55, 58.90, '2024-12-31', 'La Roche-Posay', 'Dermatológico');
 
 -- Visualiza os dados inseridos
-SELECT * FROM produtos ORDER BY categoria, nome;
+SELECT * FROM produtos ORDER BY categoria, nome_produto;
