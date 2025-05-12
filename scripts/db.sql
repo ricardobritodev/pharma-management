@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS produtos (
 );
 
 CREATE TABLE IF NOT EXISTS movimentacoes (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    movimentacoes_id INT PRIMARY KEY AUTO_INCREMENT,
     produto_id INT NOT NULL,
     tipo VARCHAR (100) NOT NULL,
     quantidade INT NOT NULL,
@@ -26,8 +26,8 @@ CREATE TABLE IF NOT EXISTS movimentacoes (
 );
 
 CREATE TABLE IF NOT EXISTS usuarios (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    nome VARCHAR(150) NOT NULL,
+    usuario_id INT PRIMARY KEY AUTO_INCREMENT,
+    nome_usuario VARCHAR(150) NOT NULL,
     cpf VARCHAR(14) NOT NULL UNIQUE,
     email VARCHAR(255) NOT NULL UNIQUE,
     username VARCHAR(50) NOT NULL UNIQUE,

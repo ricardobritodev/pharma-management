@@ -73,7 +73,7 @@ def cadastrar_usuario():
 
     try:
         cursor.execute("""
-            INSERT INTO usuarios (nome, cpf, email, username, senha)
+            INSERT INTO usuarios (nome_usuario, cpf, email, username, senha)
             VALUES (%s, %s, %s, %s, %s)
         """, (nome, cpf, email, username, senha_hash))
         conexao.commit()
