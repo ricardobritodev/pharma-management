@@ -16,13 +16,13 @@ CREATE TABLE IF NOT EXISTS produtos (
 
 CREATE TABLE IF NOT EXISTS movimentacoes (
     movimentacoes_id INT PRIMARY KEY AUTO_INCREMENT,
-    produto_id INT NOT NULL,
+    produto_fk INT NOT NULL,
     tipo VARCHAR (100) NOT NULL,
     quantidade INT NOT NULL,
     data DATE NOT NULL,
     responsavel VARCHAR (100),
     observacao VARCHAR (500),
-    FOREIGN KEY (produto_id) REFERENCES produtos (produto_id)
+    FOREIGN KEY (produto_fk) REFERENCES produtos (produto_id)
 );
 
 CREATE TABLE IF NOT EXISTS usuarios (
@@ -33,3 +33,4 @@ CREATE TABLE IF NOT EXISTS usuarios (
     username VARCHAR(50) NOT NULL UNIQUE,
     senha VARCHAR(255) NOT NULL
 );
+

@@ -115,7 +115,7 @@ def cadastrar_produto():
         # Registra o movimento de entrada do produto
         cursor.execute('''
             INSERT INTO movimentacoes 
-            (produto_id, tipo, quantidade, data, responsavel)
+            (produto_fk, tipo, quantidade, data, responsavel)
             VALUES (%s, %s, %s, %s, %s)
         ''', (produto_id, 'entrada', quantidade, datetime.now(), 'Sistema'))
 
@@ -170,7 +170,7 @@ def registrar_saida():
             # Registra a movimentação de saída
             cursor.execute('''
                 INSERT INTO movimentacoes 
-                (produto_id, tipo, quantidade, data, responsavel)
+                (produto_fk, tipo, quantidade, data, responsavel)
                 VALUES (%s, %s, %s, %s, %s)
             ''', (produto_id, 'saida', quantidade, datetime.now(), responsavel))
 
@@ -286,7 +286,7 @@ def editar_produto():
         # Registra a movimentação de edição
         cursor.execute('''
             INSERT INTO movimentacoes 
-            (produto_id, tipo, quantidade, data, responsavel, observacao)
+            (produto_fk, tipo, quantidade, data, responsavel, observacao)
             VALUES (%s, %s, %s, %s, %s, %s)
         ''', (
             produto_id, 'edicao', nova_quantidade, 
@@ -355,7 +355,7 @@ def deletar_produto():
             # Só executa as deleções SE o usuário confirmar
             try:
                 # 1. Primeiro deleta as movimentações
-                cursor.execute('DELETE FROM movimentacoes WHERE produto_id = %s', (produto_id,))
+                cursor.execute('DELETE FROM movimentacoes WHERE produto_fk = %s', (produto_id,))
                 # 2. Depois deleta o produto
                 cursor.execute('DELETE FROM produtos WHERE produto_id = %s', (produto_id,))
                 conexao.commit()
