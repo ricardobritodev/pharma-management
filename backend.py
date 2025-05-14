@@ -84,6 +84,18 @@ def cadastrar_usuario():
         cursor.close()
         conexao.close()
 
+# Primeiro crie esta função fora do cadastrar_produto
+def validar_data(data_str):
+    try:
+        data = datetime.strptime(data_str, '%Y-%m-%d').date()
+        if data < datetime.now().date():
+            print("Erro: Data não pode ser anterior à data atual!")
+            return False
+        return True
+    except ValueError:
+        print("Erro: Formato inválido! Use AAAA-MM-DD")
+        return False
+
 # Função para cadastrar um novo produto no banco de dados
 def cadastrar_produto():
     print("\n--- Cadastro de Produto ---")
@@ -92,37 +104,60 @@ def cadastrar_produto():
     nome = input("Nome do produto: >> ")
     principio_ativo = input("Princípio ativo: >> ")
     lote = input("Número do lote: >> ")
-    quantidade = int(input("Quantidade: >> "))
-    preco = float(input("Preço unitário: >> "))
-    data_validade = input("Data de validade (AAAA-MM-DD): >> ")
+    
+    # Validação numérica segura
+    while True:
+        try:
+            quantidade = int(input("Quantidade: >> "))
+            break
+        except ValueError:
+            print("Erro: Digite um número inteiro válido!")
+    
+    while True:
+        try:
+            preco = float(input("Preço unitário: >> "))
+            break
+        except ValueError:
+            print("Erro: Digite um valor numérico válido!")
+     
     fabricante = input("Fabricante: >> ")
     categoria = input("Categoria: >> ")
+
+     # Validação de data com loop
+    while True:
+        data_validade = input("Data de validade (AAAA-MM-DD): >> ")
+        if validar_data(data_validade):
+            break
 
     # Conecta ao banco
     conexao = conectar_banco()
     if conexao:
         cursor = conexao.cursor()
 
-        # Insere o novo produto na tabela 'produtos'
-        cursor.execute('''
-            INSERT INTO produtos 
-            (nome_produto, principio_ativo, lote, quantidade, preco, data_validade, fabricante, categoria)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-        ''', (nome, principio_ativo, lote, quantidade, preco, data_validade, fabricante, categoria))
-        
-        produto_id = cursor.lastrowid  # Recupera o ID do produto recém-inserido
+        try:
+            cursor.execute('''
+                INSERT INTO produtos 
+                (nome_produto, principio_ativo, lote, quantidade, preco, data_validade, fabricante, categoria)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            ''', (nome, principio_ativo, lote, quantidade, preco, data_validade, fabricante, categoria))
+            
+            produto_id = cursor.lastrowid
 
-        # Registra o movimento de entrada do produto
-        cursor.execute('''
-            INSERT INTO movimentacoes 
-            (produto_fk, tipo, quantidade, data, responsavel)
-            VALUES (%s, %s, %s, %s, %s)
-        ''', (produto_id, 'entrada', quantidade, datetime.now(), 'Sistema'))
+            cursor.execute('''
+                INSERT INTO movimentacoes 
+                (produto_fk, tipo, quantidade, data, responsavel)
+                VALUES (%s, %s, %s, %s, %s)
+            ''', (produto_id, 'entrada', quantidade, datetime.now(), 'Sistema'))
 
-        conexao.commit()  # Salva as alterações no banco
-        conexao.close()   # Fecha a conexão com o banco
+            conexao.commit()
+            print("Produto cadastrado com sucesso!")
 
-        print("Produto cadastrado com sucesso!")
+        except mysql.connector.Error as err:
+            print(f"Erro no banco: {err}")
+            conexao.rollback()
+            
+        finally:
+            conexao.close()
 
 # Lista todos os produtos cadastrados
 def listar_produtos():
