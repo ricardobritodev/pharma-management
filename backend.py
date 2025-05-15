@@ -6,9 +6,9 @@ import re #Regex
 from datetime import datetime  # Importa o módulo para trabalhar com datas e horários.
 import bcrypt # Biblipteca que transforma a senha comum em HASH para motivos de segurança.
 
-#"\˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜#
-#                           Menu principal que exibe as opções para o usuário                                            #
-#""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""#
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+#                           Menu principal que exibe as opções para o usuário                                       #
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 def menu_produtos():
     while True:
         print("\n=== Sistema de Farmácia ===")
@@ -40,7 +40,9 @@ def menu_produtos():
         else:
             print("Opção inválida!")
 
-# Função para login
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+#                                         Função Para Login do Usuário                                              #
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 def login_usuario():
     print("\n--- Login de Usuário ---")
     conexao = conectar_banco()  # Cria conexão com o banco
@@ -64,7 +66,9 @@ def validar_email(email):
     padrao = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$' 
     return re.match(padrao, email) is not None
 
-# Função para cadastrar usuário
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+#                                         Função para cadastrar usuário                                             #
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 def cadastrar_usuario():
     print("\n--- Cadastro de Usuário ---")
 
@@ -112,7 +116,9 @@ def cadastrar_usuario():
         cursor.close()
         conexao.close()
 
-# Primeiro crie esta função fora do cadastrar_produto
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+#                                         Validador de input de Data                                                #
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 def validar_data(data_str):
     try:
         data = datetime.strptime(data_str, '%Y-%m-%d').date()
@@ -124,7 +130,9 @@ def validar_data(data_str):
         print("Erro: Formato inválido! Use AAAA-MM-DD")
         return False
 
-# Função para cadastrar um novo produto no banco de dados
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+#                                Função para cadastrar um novo produto no banco de dados                            #
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 def cadastrar_produto():
     print("\n--- Cadastro de Produto ---")
     
@@ -191,7 +199,9 @@ def cadastrar_produto():
         finally:
             conexao.close()
 
-# Lista todos os produtos cadastrados
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+#                                Função para Listar todos os produtos cadastrados                                   #
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 def listar_produtos():
     print("\n--- Lista de Produtos ---")
     conexao = conectar_banco()
@@ -208,7 +218,9 @@ def listar_produtos():
         
         conexao.close()
 
-# Registra a saída de um produto do estoque
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+#                               Função para Registrar a saída de um produto do estoque                              #
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 def registrar_saida():
     print("\n--- Registro de Saída de Produto ---")
     listar_produtos()  # Mostra produtos disponíveis
@@ -264,7 +276,10 @@ def registrar_saida():
 
         conexao.close()
 
-# Verifica produtos com validade próxima (em até 30 dias)
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+#                                 Função para Verificar validade dos produtos                                       #
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+# FALTA AJUSTAR
 def verificar_validade():
     print("\n--- Produtos Próximos da Validade ---")
     conexao = conectar_banco()
@@ -285,8 +300,9 @@ def verificar_validade():
         
         conexao.close()
 
-# Função para editar um item
-# Função para editar um item
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+#                               Função para editar as propriedades de um produto do estoque                         #
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 def editar_produto():
     print("\n--- Edição de Produto ---")
     listar_produtos()  # Mostra a lista de produtos disponíveis
@@ -390,7 +406,9 @@ def editar_produto():
             cursor.close()
         conexao.close()
 
-# Menu Cadastro/login
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+#                                       Função para menu de cadastro e login                                        #
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 def menu():
     while True:
         print("\n1. Login")
@@ -408,7 +426,10 @@ def menu():
         else:
             print("Opção inválida.")
 
-# Função para deletar um produto
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+#                                           Função para deletar um produto                                          #
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 def deletar_produto():
     """Deleta um produto do banco de dados"""
     print("\n--- Deletar Produto ---")
@@ -476,8 +497,9 @@ def deletar_produto():
             cursor.close()
             conexao.close()
 
-
-# Ponto de entrada principal do programa
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+#                                       Ponto de entrada principal do programa                                      #
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 if __name__ == "__main__":
     menu()
 
