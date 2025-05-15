@@ -433,7 +433,7 @@ def deletar_produto():
             
             while True:
                 try:
-                    produto_id = int(input("\nID do produto a ser deletado: "))
+                    produto_id = int(input("\nID do produto a ser deletado: >> "))
                     if produto_id > 0:
                         break
                     print("Valor negativo. Digite novamente.")
@@ -442,7 +442,7 @@ def deletar_produto():
 
             while True:
                 try:
-                    confirmacao = input(f"Tem certeza que deseja deletar o produto ID {produto_id}? (s/n): ").lower()
+                    confirmacao = input(f"Tem certeza que deseja deletar o produto ID {produto_id}? (s/n): >> ").lower()
                     if confirmacao == 's':
                         # 1. Primeiro deleta as movimentações
                         cursor.execute('DELETE FROM movimentacoes WHERE produto_fk = %s', (produto_id,))
@@ -476,12 +476,9 @@ def deletar_produto():
             cursor.close()
             conexao.close()
 
-    menu_produtos() # TESTAR
-
-
 
 # Ponto de entrada principal do programa
 if __name__ == "__main__":
-    editar_produto()
+    menu()
 
 
