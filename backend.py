@@ -1,11 +1,14 @@
 import mysql.connector
 from mysql.connector import Error 
 from settings import conectar_banco # Importa a função de conexão com o banco do arquivo settings.py
+import re #Regex
 
 from datetime import datetime  # Importa o módulo para trabalhar com datas e horários.
 import bcrypt # Biblipteca que transforma a senha comum em HASH para motivos de segurança.
 
-# Menu principal que exibe as opções para o usuário
+#"\˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜#
+#                           Menu principal que exibe as opções para o usuário                                            #
+#""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""#
 def menu_produtos():
     while True:
         print("\n=== Sistema de Farmácia ===")
@@ -57,15 +60,40 @@ def login_usuario():
     cursor.close()
     conexao.close()
 
+def validar_email(email):
+    padrao = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$' 
+    return re.match(padrao, email) is not None
 
 # Função para cadastrar usuário
 def cadastrar_usuario():
     print("\n--- Cadastro de Usuário ---")
-    nome = input("Nome completo: >> ")
+
+    while True:
+        nome = input("Nome completo: >> ").strip().upper()
+        if nome:
+            break
+        print("Nome não pode ser vazio. Tente novamente.")
+
     cpf = input("CPF (somente números): >> ")
-    email = input("Email: >> ")
-    username = input("Nome de usuário: >> ")
-    senha = input("Senha: >> ")
+
+    while True:
+        email = input("Email: >> ").strip().lower()
+        if validar_email(email):
+            break
+        print("Email Invalido. Tente novamente.")
+
+    while True:
+        username = input("Nome de usuário: >> ").strip().lower()
+        if len(username) >= 4:
+            break
+        print("Username deve ter pelo menos 4 caracteres.")
+
+    while True:
+        senha = input("Senha: >> ").strip()
+        if len(senha) >= 6:
+            break
+        print("Senha deve ter pelo menos 6 caracteres.")
+
     senha_hash = bcrypt.hashpw(senha.encode('utf-8'), bcrypt.gensalt())
 
     conexao = conectar_banco()
@@ -101,27 +129,31 @@ def cadastrar_produto():
     print("\n--- Cadastro de Produto ---")
     
     # Coleta os dados do usuário
-    nome = input("Nome do produto: >> ")
-    principio_ativo = input("Princípio ativo: >> ")
-    lote = input("Número do lote: >> ")
+    nome = input("Nome do produto: >> ").upper()
+    principio_ativo = input("Princípio ativo: >> ").upper()
+    lote = input("Número do lote: >> ").upper()
     
     # Validação numérica segura
     while True:
         try:
             quantidade = int(input("Quantidade: >> "))
-            break
+            if quantidade > 0:
+                break
+            print("Valor negativo. Digite novamente.")
         except ValueError:
             print("Erro: Digite um número inteiro válido!")
     
     while True:
         try:
             preco = float(input("Preço unitário: >> "))
-            break
+            if preco > 0:
+                break
+            print("Valor negativo. Digite novamente.")
         except ValueError:
             print("Erro: Digite um valor numérico válido!")
      
-    fabricante = input("Fabricante: >> ")
-    categoria = input("Categoria: >> ")
+    fabricante = input("Fabricante: >> ").upper()
+    categoria = input("Categoria: >> ").upper()
 
      # Validação de data com loop
     while True:
@@ -180,9 +212,27 @@ def listar_produtos():
 def registrar_saida():
     print("\n--- Registro de Saída de Produto ---")
     listar_produtos()  # Mostra produtos disponíveis
-    produto_id = int(input("\nID do produto para saída: >> "))
-    quantidade = int(input("Quantidade a retirar: >> "))
-    responsavel = input("Responsável pela retirada: >> ")
+
+    while True:
+        try:
+            produto_id = int(input("\nID do produto para saída: >> "))
+            if produto_id > 0:
+                break
+            print("Valor negativo. Digite novamente.")
+        except ValueError:
+            print("Erro: Digite um valor numérico válido!")
+
+    while True:
+        try:
+            quantidade = int(input("Quantidade a retirar: >> "))
+            if quantidade > 0:
+                break
+            print("Valor negativo. Digite novamente.")
+        except ValueError:
+            print("Erro: Digite um valor numérico válido!")
+
+
+    responsavel = input('Responsável pela retirada: >> ').upper()
 
     conexao = conectar_banco()
     if conexao:
@@ -235,6 +285,7 @@ def verificar_validade():
         
         conexao.close()
 
+# Função para editar um item
 # Função para editar um item
 def editar_produto():
     print("\n--- Edição de Produto ---")
@@ -380,30 +431,40 @@ def deletar_produto():
             for produto in produtos:
                 print(f"ID: {produto['produto_id']} | Nome: {produto['nome_produto']}")
             
-            produto_id = int(input("\nID do produto a ser deletado: "))
-            confirmacao = input(f"Tem certeza que deseja deletar o produto ID {produto_id}? (s/n): ").lower()
+            while True:
+                try:
+                    produto_id = int(input("\nID do produto a ser deletado: "))
+                    if produto_id > 0:
+                        break
+                    print("Valor negativo. Digite novamente.")
+                except ValueError:
+                    print("Erro: Digite um valor numérico válido!")
 
-            if confirmacao != 's':
-                print("Operação cancelada.")
-                return
-                
-            # Só executa as deleções SE o usuário confirmar
-            try:
-                # 1. Primeiro deleta as movimentações
-                cursor.execute('DELETE FROM movimentacoes WHERE produto_fk = %s', (produto_id,))
-                # 2. Depois deleta o produto
-                cursor.execute('DELETE FROM produtos WHERE produto_id = %s', (produto_id,))
-                conexao.commit()
-                
-                if cursor.rowcount > 0:
-                    print(f"Produto ID {produto_id} deletado com sucesso!")
-                else:
-                    print("Nenhum produto foi deletado.")
-                    
-            except Error as e:
-                print(f"Erro ao deletar: {e}")
-                conexao.rollback()
-                
+            while True:
+                try:
+                    confirmacao = input(f"Tem certeza que deseja deletar o produto ID {produto_id}? (s/n): ").lower()
+                    if confirmacao == 's':
+                        # 1. Primeiro deleta as movimentações
+                        cursor.execute('DELETE FROM movimentacoes WHERE produto_fk = %s', (produto_id,))
+                        # 2. Depois deleta o produto
+                        cursor.execute('DELETE FROM produtos WHERE produto_id = %s', (produto_id,))
+                        conexao.commit()
+                        
+                        if cursor.rowcount > 0:
+                            print(f"Produto ID {produto_id} deletado com sucesso!")
+                            break
+
+                    if confirmacao == 'n':
+                        print("Nenhum produto foi deletado.")
+                        break
+                        
+                    else:
+                        print(f"Operação Invalida. Tem certeza que deseja deletar o produto ID {produto_id}? (s/n): ")
+
+                except Error as e:
+                    print(f"Erro ao deletar: {e}")
+                    conexao.rollback()
+                     
     except ValueError:
         print("Por favor, digite um ID válido (número inteiro).")
     except Exception as e:
@@ -415,7 +476,12 @@ def deletar_produto():
             cursor.close()
             conexao.close()
 
+    menu_produtos() # TESTAR
+
+
 
 # Ponto de entrada principal do programa
 if __name__ == "__main__":
-    menu()
+    editar_produto()
+
+
