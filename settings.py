@@ -1,5 +1,6 @@
 # Importa o módulo necessário para conectar ao MySQL
 import mysql.connector
+from mysql.connector import Error
 
 # Função que cria a conexão com o banco de dados
 def conectar_banco():

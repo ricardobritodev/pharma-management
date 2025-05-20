@@ -1,9 +1,6 @@
-import mysql.connector
-from mysql.connector import Error 
+from datetime import datetime  # Importa o módulo para trabalhar com datas e horários.
 from settings import conectar_banco # Importa a função de conexão com o banco do arquivo settings.py
 import re #Regex
-
-from datetime import datetime  # Importa o módulo para trabalhar com datas e horários.
 import bcrypt # Biblipteca que transforma a senha comum em HASH para motivos de segurança.
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
@@ -47,8 +44,8 @@ def login_usuario():
     print("\n--- Login de Usuário ---")
     conexao = conectar_banco()  # Cria conexão com o banco
     cursor = conexao.cursor()   # Cria o cursor
-    username = input("Nome de usuário: >> ")
-    senha = input("Senha: >> ")
+    username = input("Nome de usuário: >> ").strip().lower()
+    senha = input("Senha: >> ").strip()
 
     cursor.execute("SELECT senha FROM usuarios WHERE username = %s", (username,))
     resultado = cursor.fetchone()
@@ -62,6 +59,9 @@ def login_usuario():
     cursor.close()
     conexao.close()
 
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+#                                         Função Para Validar Email                                           #
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 def validar_email(email):
     padrao = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$' 
     return re.match(padrao, email) is not None
@@ -165,7 +165,7 @@ def cadastrar_produto():
 
      # Validação de data com loop
     while True:
-        data_validade = input("Data de validade (AAAA-MM-DD): >> ")
+        data_validade = input("Data de validade (AAAA-MM-DD): >> ").strip()
         if validar_data(data_validade):
             break
 
@@ -223,7 +223,7 @@ def listar_produtos():
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 def registrar_saida():
     print("\n--- Registro de Saída de Produto ---")
-    listar_produtos()  # Mostra produtos disponíveis
+    listar_produtos()  
 
     while True:
         try:
@@ -279,7 +279,6 @@ def registrar_saida():
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 #                                 Função para Verificar validade dos produtos                                       #
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
-# FALTA AJUSTAR
 def verificar_validade():
     print("\n--- Produtos Próximos da Validade ---")
     conexao = conectar_banco()
@@ -287,7 +286,7 @@ def verificar_validade():
         cursor = conexao.cursor(dictionary=True)
         cursor.execute('''
             SELECT * FROM produtos
-            WHERE data_validade BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY)
+            WHERE data_validade BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 45 DAY)
             ORDER BY data_validade
         ''')
         produtos = cursor.fetchall()
@@ -504,3 +503,9 @@ if __name__ == "__main__":
     menu()
 
 
+"""
+Tasks:
+02 - Validador de inputs na função de editar produto
+03 - Melhorar interface com Rich
+04 - melhora conexao b db com aula mentoria 
+"""
