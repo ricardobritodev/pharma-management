@@ -3,13 +3,64 @@ from settings import conectar_banco # Importa a função de conexão com o banco
 import re #Regex
 import bcrypt # Biblipteca que transforma a senha comum em HASH para motivos de segurança.
 
+import time
+import sys
+import os
+
+from rich.console import Console
+from rich.table import Table
+from rich.panel import Panel
+from rich.prompt import Prompt, IntPrompt, FloatPrompt
+from rich.align import Align
+
+console = Console()
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+#                                                  Função Cabeçalho                                                 #
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+
+def cabecalho():
+    # Centraliza o ASCII art usando Align
+    ascii_art = Align.center("""[cyan]
+░█████╗░░█████╗░██████╗░███████╗  ██╗███╗░░██╗  ░░░░░░░
+██╔══██╗██╔══██╗██╔══██╗██╔════╝  ██║████╗░██║  ░░██╗░░
+██║░░╚═╝██║░░██║██║░░██║█████╗░░  ██║██╔██╗██║  ██████╗
+██║░░██╗██║░░██║██║░░██║██╔══╝░░  ██║██║╚████║  ╚═██╔═╝
+╚█████╔╝╚█████╔╝██████╔╝███████╗  ██║██║░╚███║  ░░╚═╝░░
+░╚════╝░░╚════╝░╚═════╝░╚══════╝  ╚═╝╚═╝░░╚══╝  ░░░░░░░
+
+  ██████╗░██╗░░██╗░█████╗░██████╗░███╗░░░███╗░█████╗░
+  ██╔══██╗██║░░██║██╔══██╗██╔══██╗████╗░████║██╔══██╗
+  ██████╔╝███████║███████║██████╔╝██╔████╔██║███████║
+  ██╔═══╝░██╔══██║██╔══██║██╔══██╗██║╚██╔╝██║██╔══██║
+  ██║░░░░░██║░░██║██║░░██║██║░░██║██║░╚═╝░██║██║░░██║
+  ╚═╝░░░░░╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░░░░╚═╝╚═╝░░╚═╝[cyan]
+""")
+    console.print(ascii_art)
+
+    # Centraliza as linhas decorativas e título
+    console.print(Align.center("[magenta]++++++++++++++++++++++++++++++++++++++++++++++++++++[/magenta]"))
+    console.print(Align.center("[magenta]++++++   GERENCIADOR DE ESTOQUE DE FARMÁCIA   ++++++[/magenta]"))
+    console.print(Align.center("[magenta]++++++++++++++++++++++++++++++++++++++++++++++++++++[/magenta]"))
+
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+#                                                  Função limpar a tela                                        #
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+def limpar_tela():
+    # Verifica o sistema operacional
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 #                           Menu principal que exibe as opções para o usuário                                       #
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 def menu_produtos():
+    limpar_tela()
+    cabecalho()
     while True:
-        print("\n=== Sistema de Farmácia ===")
-        print("1. Cadastrar produto")
+        console.print(Align.center("\n\n[bold yellow]+++++++  Menu de Produtos  +++++++[/bold yellow]"))
+        print("\n\n\n1. Cadastrar produto")
         print("2. Listar produtos")
         print("3. Registrar saída")
         print("4. Verificar validade")
@@ -17,7 +68,7 @@ def menu_produtos():
         print("6. Editar produto") 
         print("7. Sair")  
 
-        opcao = input("Escolha uma opção: >> ")
+        opcao = input("\nEscolha uma opção: >> ")
 
         if opcao == '1':
             cadastrar_produto()
@@ -33,6 +84,7 @@ def menu_produtos():
             editar_produto()
         elif opcao == '7':  
             print("Saindo do sistema...")
+            menu()
             break
         else:
             print("Opção inválida!")
@@ -41,7 +93,9 @@ def menu_produtos():
 #                                         Função Para Login do Usuário                                              #
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 def login_usuario():
-    print("\n--- Login de Usuário ---")
+    limpar_tela()
+    cabecalho()
+    console.print(Align.center("\n\n[bold yellow]+++++++  Login de Usuário  +++++++[/bold yellow]"))
     conexao = conectar_banco()  # Cria conexão com o banco
     cursor = conexao.cursor()   # Cria o cursor
     username = input("Nome de usuário: >> ").strip().lower()
@@ -70,10 +124,12 @@ def validar_email(email):
 #                                         Função para cadastrar usuário                                             #
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 def cadastrar_usuario():
-    print("\n--- Cadastro de Usuário ---")
+    limpar_tela()
+    cabecalho()
+    console.print(Align.center("\n\n[bold yellow]+++++++  Cadastro de Usuário +++++++[/bold yellow]"))
 
     while True:
-        nome = input("Nome completo: >> ").strip().upper()
+        nome = input("\nNome completo: >> ").strip().upper()
         if nome:
             break
         print("Nome não pode ser vazio. Tente novamente.")
@@ -88,7 +144,7 @@ def cadastrar_usuario():
 
     while True:
         username = input("Nome de usuário: >> ").strip().lower()
-        if len(username) >= 4:
+        if len(username) >= 3:
             break
         print("Username deve ter pelo menos 4 caracteres.")
 
@@ -115,6 +171,7 @@ def cadastrar_usuario():
     finally:
         cursor.close()
         conexao.close()
+    menu()
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 #                                         Validador de input de Data                                                #
@@ -134,10 +191,12 @@ def validar_data(data_str):
 #                                Função para cadastrar um novo produto no banco de dados                            #
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 def cadastrar_produto():
-    print("\n--- Cadastro de Produto ---")
+    limpar_tela()
+    cabecalho()
+    console.print(Align.center("\n\n[bold yellow]+++++++  Cadastro de Produto  +++++++[/bold yellow]"))
     
     # Coleta os dados do usuário
-    nome = input("Nome do produto: >> ").upper()
+    nome = input("\nNome do produto: >> ").upper()
     principio_ativo = input("Princípio ativo: >> ").upper()
     lote = input("Número do lote: >> ").upper()
     
@@ -199,11 +258,16 @@ def cadastrar_produto():
         finally:
             conexao.close()
 
+    limpar_tela()
+
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 #                                Função para Listar todos os produtos cadastrados                                   #
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 def listar_produtos():
-    print("\n--- Lista de Produtos ---")
+    limpar_tela()
+    cabecalho()
+    console.print(Align.center("\n\n[bold yellow]+++++++  Lista de Produtos  +++++++[/bold yellow]"))
+
     conexao = conectar_banco()
     if conexao:
         cursor = conexao.cursor(dictionary=True)  # Usa dicionário para acessar colunas por nome
@@ -222,7 +286,9 @@ def listar_produtos():
 #                               Função para Registrar a saída de um produto do estoque                              #
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 def registrar_saida():
-    print("\n--- Registro de Saída de Produto ---")
+    limpar_tela()
+    cabecalho()
+    console.print(Align.center("\n\n[bold yellow]+++++++  Registro de Saída de Produto  +++++++[/bold yellow]"))
     listar_produtos()  
 
     while True:
@@ -280,7 +346,9 @@ def registrar_saida():
 #                                 Função para Verificar validade dos produtos                                       #
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 def verificar_validade():
-    print("\n--- Produtos Próximos da Validade ---")
+    limpar_tela()
+    cabecalho()
+    console.print(Align.center("\n\n[bold yellow]+++++++  Produtos Próximos da Validade  +++++++[/bold yellow]"))
     conexao = conectar_banco()
     if conexao:
         cursor = conexao.cursor(dictionary=True)
@@ -292,10 +360,10 @@ def verificar_validade():
         produtos = cursor.fetchall()
 
         if not produtos:
-            print("Nenhum produto próximo da validade.")
+            print("\nNenhum produto próximo da validade.")
         else:
             for produto in produtos:
-                print(f"ID: {produto['produto_id']} | Nome: {produto['nome_produto']} | Validade: {produto['data_validade']}")
+                print(f"\nID: {produto['produto_id']} | Nome: {produto['nome_produto']} | Validade: {produto['data_validade']}")
         
         conexao.close()
 
@@ -303,10 +371,12 @@ def verificar_validade():
 #                               Função para editar as propriedades de um produto do estoque                         #
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 def editar_produto():
-    print("\n--- Edição de Produto ---")
+    limpar_tela()
+    cabecalho()
+    console.print(Align.center("\n\n[bold yellow]+++++++  Edição de Produto   +++++++[/bold yellow]"))
     listar_produtos()  # Mostra a lista de produtos disponíveis
     
-    produto_id = input("Digite o ID do produto que deseja editar (ou 0 para cancelar): >> ")
+    produto_id = input("\nDigite o ID do produto que deseja editar (ou 0 para cancelar): >> ")
     
     if produto_id == '0':
         return
@@ -404,16 +474,35 @@ def editar_produto():
         if 'cursor' in locals():
             cursor.close()
         conexao.close()
+    menu_produtos()
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+#                                           Função para menu infinito                                               #
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+def menu_infinito():
+    limpar_tela()
+    cabecalho()
+    console.print(Align.center("\n\n[bold yellow]PRESSIONE ENTER PARA INICIAR...[/bold yellow]"))
+    while True:
+        opcao = input()
+        if opcao == "":
+            menu()
+        else:
+            console.print(Align.center("[red bold]APERTE ENTER...[/red bold]"))
+            break
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 #                                       Função para menu de cadastro e login                                        #
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 def menu():
+    limpar_tela()
+    cabecalho()
     while True:
+        console.print(Align.center("\n\n[bold yellow]+++++++  Menu Inicial   +++++++[/bold yellow]"))
         print("\n1. Login")
         print("2. Cadastrar usuário")
         print("3. Sair")
-        opcao = input("Escolha uma opção: >> ")
+        opcao = input("\nEscolha uma opção: >> ")
 
         if opcao == "1":
             login_usuario()
@@ -421,6 +510,7 @@ def menu():
             cadastrar_usuario()
         elif opcao == "3":
             print("Finalizando Programa")
+            menu_infinito()
             break
         else:
             print("Opção inválida.")
@@ -430,8 +520,9 @@ def menu():
 #                                           Função para deletar um produto                                          #
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 def deletar_produto():
-    """Deleta um produto do banco de dados"""
-    print("\n--- Deletar Produto ---")
+    limpar_tela()
+    cabecalho()
+    console.print(Align.center("\n\n[bold yellow]+++++++  Deletar Produto  +++++++[/bold yellow]"))
     
     conexao = None
     try:
@@ -495,6 +586,7 @@ def deletar_produto():
         if conexao and conexao.is_connected():
             cursor.close()
             conexao.close()
+    menu_produtos()
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 #                                       Ponto de entrada principal do programa                                      #
