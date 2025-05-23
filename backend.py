@@ -8,9 +8,6 @@ import sys
 import os
 
 from rich.console import Console
-from rich.table import Table
-from rich.panel import Panel
-from rich.prompt import Prompt, IntPrompt, FloatPrompt
 from rich.align import *
 
 console = Console()
