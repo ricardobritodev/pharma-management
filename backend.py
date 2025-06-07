@@ -486,7 +486,7 @@ def menu_infinito():
             menu()
         else:
             console.print(Align.center("[red bold]APERTE ENTER...[/red bold]"))
-            break
+            #break
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 #                                       Função para menu de cadastro e login                                        #
